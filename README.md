@@ -26,6 +26,7 @@ function myTask(ev){
     app.idleTasks.itemByName("myTask").remove();
 
     // Your actions
+    // Assuming text is selected
     app.menuActions.itemByID(78082).invoke(); // 新規ページ参照...
 
     // Off SuppressDialogs
