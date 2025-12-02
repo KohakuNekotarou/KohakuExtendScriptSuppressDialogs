@@ -6,6 +6,10 @@
 We cannot be held responsible for any issues arising from your use of this service.<br>
 Please use it at your own risk.<br>
 
+スクリプトでどうしても実現出来ない事がありましたら、C++SDKで可能か試してみます。<br>
+ゆる～くPlugIn開発の仕事募集中、お気軽にメール下さい。<br>
+kohaku.nekotarou@gmail.com<br>
+
 ## extendScript for JavaScript
 ```
 // SuppressDialogs
