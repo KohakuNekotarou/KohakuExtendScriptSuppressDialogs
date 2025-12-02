@@ -34,7 +34,7 @@ DECLARE_GUID(CPrefs_CLSID, kCPrefs_CLSID);
 // Method IDs
 enum KESSDScriptEvents
 {
-	e_KESSDSuppressDialogs = 'KSDl',
+	e_KESSDSuppressDialogsIdleTask = 'KSDI',
 };
 
 // Property IDs

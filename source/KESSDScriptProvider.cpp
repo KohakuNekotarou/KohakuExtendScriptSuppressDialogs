@@ -44,12 +44,31 @@ public:
 
 	KESSDScriptProvider(IPMUnknown* boss) : CScriptProvider(boss) {};
 
+	virtual ErrorCode HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
 private:
 
 	ErrorCode GetSetSuppressDialogs(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript);
 };
 
 CREATE_PMINTERFACE(KESSDScriptProvider, kKESSDScriptProviderImpl)
+
+ErrorCode KESSDScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
+{
+	ErrorCode result = kFailure;
+
+	switch (scriptID.Get())
+	{
+	case e_KESSDSuppressDialogsIdleTask:
+		result = this->GetSetSuppressDialogs(scriptID, iScriptRequestData, iScript);
+		break;
+
+	default:
+		return CScriptProvider::HandleMethod(scriptID, iScriptRequestData, iScript);
+	}
+
+	return result;
+}
 
 ErrorCode KESSDScriptProvider::GetSetSuppressDialogs(
 	ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
@@ -58,40 +77,27 @@ ErrorCode KESSDScriptProvider::GetSetSuppressDialogs(
 
 	do
 	{
+		// ---------------------------------------------------------------------------------------
+		// Query argument.
 		ScriptData scriptData;
-		if (iScriptRequestData->IsPropertyGet()) // Get
-		{
-			// ---------------------------------------------------------------------------------------
-			// Append return data
-			scriptData.SetBoolean(KESSDIdleTask::flg);
+		bool16 bool16_flg;
+		if (iScriptRequestData->ExtractRequestData(p_KESSDSuppressDialogsFlg, scriptData) == kFailure) break;
 
-			iScriptRequestData->AppendReturnData(iScript, scriptID, scriptData);
-		}
-		else if (iScriptRequestData->IsPropertyPut()) // Set
-		{
-			// ---------------------------------------------------------------------------------------
-			// Extract request data
-			status = iScriptRequestData->ExtractRequestData(scriptID.Get(), scriptData);
-			if (status != kSuccess) break;
+		if (scriptData.GetBoolean(&bool16_flg) == kFailure) break;
 
-			bool16 bool16_flg;
-			status = scriptData.GetBoolean(&bool16_flg);
-			if (status != kSuccess) break;
+		// Set flg.
+		KESSDIdleTask::flg = bool16_flg;
 
-			// Set flg.
-			KESSDIdleTask::flg = bool16_flg;
+		// ---------------------------------------------------------------------------------------
+		// Add task.
+		InterfacePtr<IIdleTask> iIdleTask(::GetExecutionContextSession(), IID_IKESSDIDLETASK);
+		if (iIdleTask == nil) break;
 
-			// ---------------------------------------------------------------------------------------
-			// Add task
-			InterfacePtr<IIdleTask> iIdleTask(::GetExecutionContextSession(), IID_IKESSDIDLETASK);
-			if (iIdleTask == nil) break;
+		InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
+		if (idleTaskMgr == nil) break;
 
-			InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
-			if (idleTaskMgr == nil) break;
-
-			idleTaskMgr->RemoveTask(iIdleTask); // RemoveTask
-			idleTaskMgr->AddTask(iIdleTask, 0); // AddTask
-		}
+		idleTaskMgr->RemoveTask(iIdleTask); // RemoveTask
+		idleTaskMgr->AddTask(iIdleTask, 0); // AddTask
 
 		status = kSuccess;
 

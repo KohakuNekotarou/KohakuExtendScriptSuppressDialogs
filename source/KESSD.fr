@@ -194,7 +194,7 @@ resource VersionedScriptElementInfo(2)
 				Object{ kGeneralPrefsObjectScriptElement },
 
 				// Suppress dialogs
-				// app.generalPreferences.kessdSuppressDialogs(true);
+				// app.generalPreferences.kessdSuppressDialogsIdleTask(true);
 				Method{ kKESSDSuppressDialogsMethodScriptElement },
 			}
 		}
@@ -202,9 +202,9 @@ resource VersionedScriptElementInfo(2)
 		Method
 		{
 			kKESSDSuppressDialogsMethodScriptElement,
-			e_KESSDSuppressDialogs,
-			"KESSD suppress dialogs",
-			"KESSD suppress dialogs.",
+			e_KESSDSuppressDialogsIdleTask,
+			"KESSD suppress dialogs idle task",
+			"KESSD suppress dialogs idle task.",
 			VoidType,
 			{ // list of method parameters.
 				p_KESSDSuppressDialogsFlg, // Parameter's ScriptID.
