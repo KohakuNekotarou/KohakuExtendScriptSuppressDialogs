@@ -8,6 +8,27 @@ Please use it at your own risk.<br>
 
 ## extendScript for JavaScript
 ```
-// Assuming there are two documentsAlign the Layout View coordinates with the active Layout View.
+// SuppressDialogs
+// When the dialog opens, the default button is pressed and it closes.
+// I have implemented IDialogMgr::SetSuppressDialogs in the script.
+// Since calling IDialogMgr::SetSuppressDialogs from ScriptProvider inexplicably fails to work,
+// I am invoking it using IIdleTask instead.
 
+#targetengine session
+
+// On SuppressDialogs
+app.generalPreferences.kessdSuppressDialogsIdleTask(true);
+
+app.idleTasks.add({name:'myTask', sleep:10}).addEventListener(IdleEvent.ON_IDLE, myTask);
+
+function myTask(ev){
+    // Remove myTask
+    app.idleTasks.itemByName("myTask").remove();
+
+    // Your actions
+    app.menuActions.itemByID(78082).invoke(); // 新規ページ参照...
+
+    // Off SuppressDialogs
+    app.generalPreferences.kessdSuppressDialogsIdleTask(false);
+}
 ```
